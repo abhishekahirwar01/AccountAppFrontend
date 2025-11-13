@@ -12,24 +12,15 @@ import {
 import { Download, FileText, Loader2, Edit } from "lucide-react";
 import type { Company, Party, Transaction } from "@/lib/types";
 import { DialogFooter } from "../ui/dialog";
-// import {
-//   generatePdfForTemplate1,
-//   generatePdfForTemplate2,
-//   generatePdfForTemplate3,
-//   generatePdfForTemplate4,
-//   generatePdfForTemplate5,
-//   generatePdfForTemplate6,
-//   generatePdfForTemplate7,
-// } from "@/lib/pdf-templates";
 
+// Import all PDF templates
+import { generatePdfForTemplate1 } from "@/lib/pdf-template1";
 import { generatePdfForTemplate2 } from "@/lib/pdf-template2";
 import { generatePdfForTemplate3 } from "@/lib/pdf-template3";
 import { generatePdfForTemplate4 } from "@/lib/pdf-template4";
 import { generatePdfForTemplate5 } from "@/lib/pdf-template5";
 import { generatePdfForTemplate6 } from "@/lib/pdf-template6";
 import { generatePdfForTemplate7 } from "@/lib/pdf-template7";
-// priya
-import { generatePdfForTemplate1 } from "@/lib/pdf-template1";
 import { generatePdfForTemplate8 } from "@/lib/pdf-template8";
 import { generatePdfForTemplate11 } from "@/lib/pdf-template11";
 import { generatePdfForTemplate12 } from "@/lib/pdf-template12";
@@ -39,24 +30,16 @@ import { generatePdfForTemplateA5_4 } from "@/lib/pdf-templateA5-4";
 import { generatePdfForTemplatet3 } from "@/lib/pdf-template-t3";
 import { generatePdfForTemplateA5_2 } from "@/lib/pdf-templateA3-2";
 import { generatePdfForTemplateA5_5 } from "@/lib/pdf-templateA5-5";
-//amit
 import { generatePdfForTemplate16 } from "@/lib/pdf-template16";
 import { generatePdfForTemplate17 } from "@/lib/pdf-template17";
 import { generatePdfForTemplate18 } from "@/lib/pdf-template18";
-
-//aditya
 import { generatePdfForTemplate20 } from "@/lib/pdf-template20";
 import { generatePdfForTemplate21 } from "@/lib/pdf-template21";
+import { generatePdfForTemplate19 } from "@/lib/pdf-template19";
+import { generatePdfForTemplate11React } from "@/lib/pdf-template11-react-pdf";
 import jsPDF from "jspdf";
 
-
-
-
-import { generatePdfForTemplate11React } from "@/lib/pdf-template11-react-pdf";
-
-
 import { EnhancedInvoicePreview } from "./enhanced-invoice-preview";
-import { generatePdfForTemplate19 } from "@/lib/pdf-template19";
 
 type TemplateKey =
   | "template1"
@@ -74,7 +57,7 @@ type TemplateKey =
   | "templateA5_2"
   | "templateA5_3"
   | "templateA5_4"
-  |"templateA5_5"
+  | "templateA5_5"
   | "template-t3"
   | "template16"
   | "template17"
@@ -108,33 +91,24 @@ export function InvoicePreview({
 
   const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  // Use the editMode prop instead of internal state
   const [pdfBlob, setPdfBlob] = React.useState<Blob | null>(null);
   const [bank, setBank] = React.useState<any>(null);
   const [client, setClient] = React.useState<any>(null);
 
   // Fetch bank details
   React.useEffect(() => {
-    console.log("transaction.bank:", transaction?.bank);
     if (transaction?.bank) {
       if (typeof transaction.bank === "object" && transaction.bank.bankName) {
-        // Already populated Bank object
-        console.log("bank already populated:", transaction.bank);
         setBank(transaction.bank);
       } else {
-        // Need to fetch
         const bankId =
           typeof transaction.bank === "string"
             ? transaction.bank
             : (transaction.bank as any)?.$oid || (transaction.bank as any)?._id;
-        console.log("bankId:", bankId);
         if (bankId) {
           fetch(`${baseURL}/api/bank-details/${bankId}`)
             .then((res) => res.json())
-            .then((data) => {
-              console.log("fetched bank:", data);
-              setBank(data);
-            })
+            .then((data) => setBank(data))
             .catch((err) => console.error("Failed to fetch bank:", err));
         }
       }
@@ -143,26 +117,16 @@ export function InvoicePreview({
     }
   }, [transaction?.bank]);
 
-  console.log("bank details:", bank);
-  console.log("shipping address:", transaction);
-  console.log("company:", company);
-  console.log("party:", party);
-
   // Fetch client details
   React.useEffect(() => {
-    console.log("company?.client:", company?.client);
     if (company?.client) {
       if (typeof company.client === "object" && company.client.contactName) {
-        // Already populated Client object
-        console.log("client already populated:", company.client);
         setClient(company.client);
       } else {
-        // Need to fetch
         const clientId =
           typeof company.client === "string"
             ? company.client
             : (company.client as any)?.$oid || (company.client as any)?._id;
-        console.log("clientId:", clientId);
         if (clientId) {
           fetch(`${baseURL}/api/clients/${clientId}`, {
             headers: {
@@ -170,10 +134,7 @@ export function InvoicePreview({
             },
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log("fetched client:", data);
-              setClient(data);
-            })
+            .then((data) => setClient(data))
             .catch((err) => console.error("Failed to fetch client:", err));
         }
       }
@@ -181,8 +142,6 @@ export function InvoicePreview({
       setClient(null);
     }
   }, [company?.client]);
-
-  // console.log("Client Data :", client.contactName)
 
   React.useEffect(() => {
     let objectUrl: string | null = null;
@@ -194,22 +153,17 @@ export function InvoicePreview({
       }
       setIsLoading(true);
       try {
-        // ✅ forward serviceNameById to the PDF generators
         let pdfBlob: Blob;
-
-        // Extract shipping address from transaction
         let shippingAddress = null;
 
         if (transaction?.shippingAddress) {
           const addr = transaction.shippingAddress as any;
           if (addr instanceof Map || addr?.size > 0) {
-            // it's a Map of services, not an address
             shippingAddress = null;
           } else if (
             typeof addr === "object" &&
             (addr.address || addr.city || addr.state)
           ) {
-            // it's a real address object
             shippingAddress = addr;
           }
         }
@@ -217,7 +171,7 @@ export function InvoicePreview({
         if (
           selectedTemplate === "template1" ||
           selectedTemplate === "template8" ||
-          selectedTemplate ===  "template9" ||
+          selectedTemplate === "template9" ||
           selectedTemplate === "templateA5" ||
           selectedTemplate === "template18" ||
           selectedTemplate === "template20" ||
@@ -229,7 +183,6 @@ export function InvoicePreview({
           selectedTemplate === "templateA5_5" ||
           selectedTemplate === "template-t3"
         ) {
-          // Template 8 and Template A5 use react-pdf and return Blob directly
           switch (selectedTemplate) {
             case "template1":
               pdfBlob = await generatePdfForTemplate1(
@@ -238,8 +191,7 @@ export function InvoicePreview({
                 party,
                 serviceNameById,
                 shippingAddress,
-                bank,
-                // client.contactName
+                bank
               );
               break;
             case "template8":
@@ -250,10 +202,9 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
-               case "template9":
+            case "template9":
               pdfBlob = await generatePdfForTemplate11React(
                 transaction,
                 company,
@@ -261,7 +212,6 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
             case "template12":
@@ -272,7 +222,6 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
             case "templateA5":
@@ -284,10 +233,8 @@ export function InvoicePreview({
                 shippingAddress,
                 bank,
                 client
-                // client.contactName
               );
               break;
-
             case "template18":
               pdfBlob = await generatePdfForTemplate18(
                 transaction,
@@ -296,7 +243,6 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
             case "template20":
@@ -307,7 +253,6 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
             case "template21":
@@ -318,7 +263,6 @@ export function InvoicePreview({
                 serviceNameById,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
             case "templateA5_2":
@@ -330,7 +274,6 @@ export function InvoicePreview({
                 shippingAddress,
                 bank,
                 client
-                // client.contactName
               );
               break;
             case "templateA5_3":
@@ -342,7 +285,6 @@ export function InvoicePreview({
                 shippingAddress,
                 bank,
                 client
-                // client.contactName
               );
               break;
             case "templateA5_4":
@@ -354,11 +296,9 @@ export function InvoicePreview({
                 shippingAddress,
                 bank,
                 client
-                // client.contactName
               );
               break;
-
-             case "templateA5_5":
+            case "templateA5_5":
               pdfBlob = await generatePdfForTemplateA5_5(
                 transaction,
                 company,
@@ -367,7 +307,6 @@ export function InvoicePreview({
                 shippingAddress,
                 bank,
                 client
-                // client.contactName
               );
               break;
             case "template-t3":
@@ -377,12 +316,10 @@ export function InvoicePreview({
                 party,
                 shippingAddress,
                 bank
-                // client.contactName
               );
               break;
           }
         } else {
-          // Other templates use jsPDF
           let docPromise: Promise<jsPDF>;
 
           switch (selectedTemplate) {
@@ -394,7 +331,6 @@ export function InvoicePreview({
                   party,
                   serviceNameById,
                   shippingAddress
-                  // client.contactName
                 )
               );
               break;
@@ -405,7 +341,6 @@ export function InvoicePreview({
                 party,
                 serviceNameById,
                 shippingAddress
-                // client.contactName
               );
               break;
             case "template4":
@@ -416,7 +351,6 @@ export function InvoicePreview({
                   party,
                   serviceNameById,
                   shippingAddress
-                  // client.contactName
                 )
               );
               break;
@@ -428,7 +362,6 @@ export function InvoicePreview({
                   party,
                   serviceNameById,
                   shippingAddress
-                  // client.contactName
                 )
               );
               break;
@@ -440,7 +373,6 @@ export function InvoicePreview({
                   party,
                   serviceNameById,
                   shippingAddress
-                  // client.contactName
                 )
               );
               break;
@@ -452,12 +384,9 @@ export function InvoicePreview({
                   party,
                   serviceNameById,
                   shippingAddress
-                  // client.contactName
                 )
               );
               break;
-            // Template 11 case ko fix karo - line 300 ke aas paas
-
             case "template11":
               docPromise = Promise.resolve(
                 generatePdfForTemplate11(
@@ -476,7 +405,6 @@ export function InvoicePreview({
                 )
               );
               break;
-
             case "template16":
               docPromise = Promise.resolve(
                 generatePdfForTemplate16(
@@ -486,7 +414,6 @@ export function InvoicePreview({
                   serviceNameById,
                   shippingAddress,
                   bank
-                  // client.contactName
                 )
               );
               break;
@@ -499,11 +426,9 @@ export function InvoicePreview({
                   serviceNameById,
                   shippingAddress,
                   bank
-                  // client.contactName
                 )
               );
               break;
-
             case "template19":
               docPromise = Promise.resolve(
                 generatePdfForTemplate19(
@@ -513,7 +438,6 @@ export function InvoicePreview({
                   serviceNameById,
                   shippingAddress,
                   bank
-                  // client.contactName
                 )
               );
               break;
@@ -524,7 +448,6 @@ export function InvoicePreview({
                 party,
                 serviceNameById,
                 shippingAddress
-                // client.contactName
               );
           }
 
@@ -560,26 +483,20 @@ export function InvoicePreview({
     if (pdfUrl) {
       const link = document.createElement("a");
       link.href = pdfUrl;
-      link.download = `${party?.name || 'invoice'}(${company?.businessName || company?.companyName || 'company'}).pdf`;
+      link.download = `${party?.name || "invoice"}(${
+        company?.businessName || company?.companyName || "company"
+      }).pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
   };
 
-  // add a small adapter so types match Select's signature
   const handleTemplateChange = React.useCallback((v: string) => {
     setSelectedTemplate(v as TemplateKey);
   }, []);
 
-  // If in edit mode, render the enhanced editor
   if (editMode) {
-    console.log(
-      "🎨 Edit mode active, PDF blob available:",
-      !!pdfBlob,
-      "Loading:",
-      isLoading
-    );
     return (
       <div className="max-h-[80vh] overflow-auto">
         <EnhancedInvoicePreview
@@ -621,7 +538,8 @@ export function InvoicePreview({
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" />
             <label className="text-sm font-medium text-muted-foreground">
-              {party?.name || 'Invoice'} ({company?.businessName || company?.companyName || 'Company'})
+              {party?.name || "Invoice"} (
+              {company?.businessName || company?.companyName || "Company"})
             </label>
           </div>
         </div>
@@ -632,23 +550,12 @@ export function InvoicePreview({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="template1">Template 1</SelectItem>
-              {/*  <SelectItem value="template2">Creative</SelectItem>
-              <SelectItem value="template3">Modern</SelectItem>
-              <SelectItem value="template4">Minimal</SelectItem>
-              <SelectItem value="template5">Refined</SelectItem>
-              <SelectItem value="template6">Standard</SelectItem>
-              <SelectItem value="template7">Prestige</SelectItem> */}
-              {/* priya  */}
               <SelectItem value="template8">Template 2</SelectItem>
-              {/* <SelectItem value="template8">Template 8</SelectItem>  */}
               <SelectItem value="template11">Template 3</SelectItem>
-              {/* <SelectItem value="template9">Template 9</SelectItem> */}
               <SelectItem value="template12">Template 4</SelectItem>
-              {/* <SelectItem value="template16">Template 5</SelectItem> */}
               <SelectItem value="template9">Template 5</SelectItem>
               <SelectItem value="template19">Template 6</SelectItem>
               <SelectItem value="template17">Template 7</SelectItem>
-
               <SelectItem value="template20">Template 8</SelectItem>
               <SelectItem value="template21">Template 9</SelectItem>
               <SelectItem value="templateA5">Template A5</SelectItem>
@@ -658,11 +565,9 @@ export function InvoicePreview({
               <SelectItem value="templateA5_5">Template A5-5</SelectItem>
               <SelectItem value="template-t3">Template T3</SelectItem>
               <SelectItem value="template18">Template T3-2</SelectItem>
-              {/* amit  */}
             </SelectContent>
           </Select>
         </div>
-        {/* Edit button removed - now controlled by parent component */}
         <Button onClick={handleDownload} disabled={isLoading || !pdfUrl}>
           <Download className="mr-2 h-4 w-4" />
           Download PDF

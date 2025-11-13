@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit, Eye, Download } from "lucide-react";
-import { InvoicePreview } from './invoice-preview';
-import { PDFEditor } from './pdf-editor';
+import { InvoicePreview } from "./invoice-preview";
+import { PDFEditor } from "./pdf-editor";
 import type { Company, Party, Transaction } from "@/lib/types";
 
 interface EnhancedInvoicePreviewProps {
@@ -33,7 +39,11 @@ export function EnhancedInvoicePreview({
   // Update pdfBlob when initialPdfBlob changes
   React.useEffect(() => {
     if (initialPdfBlob) {
-      console.log('📄 EnhancedInvoicePreview received PDF blob:', initialPdfBlob.size, 'bytes');
+      console.log(
+        "📄 EnhancedInvoicePreview received PDF blob:",
+        initialPdfBlob.size,
+        "bytes"
+      );
       setPdfBlob(initialPdfBlob);
       setIsEditMode(true);
       setShowEditor(true);
@@ -61,15 +71,17 @@ export function EnhancedInvoicePreview({
   const handleSaveEditedPDF = (modifiedBlob: Blob) => {
     setPdfBlob(modifiedBlob);
     // Here you could upload the modified PDF to your server
-    console.log('PDF saved:', modifiedBlob);
+    console.log("PDF saved:", modifiedBlob);
   };
 
   const handleExportPDF = (modifiedBlob: Blob) => {
     // Trigger download
     const url = URL.createObjectURL(modifiedBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `edited-invoice-${transaction?._id?.slice(-6) || '000000'}.pdf`;
+    link.download = `edited-invoice-${
+      transaction?._id?.slice(-6) || "000000"
+    }.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -145,7 +157,10 @@ export function EnhancedInvoicePreview({
             <h4 className="font-medium mb-2">PDF Editing Instructions:</h4>
             <ul className="list-disc list-inside space-y-1">
               <li>Click on text elements to select and edit them</li>
-              <li>Use the properties panel to change font, size, color, and position</li>
+              <li>
+                Use the properties panel to change font, size, color, and
+                position
+              </li>
               <li>Click "Add Text" to add new text elements</li>
               <li>Use Undo/Redo for changes</li>
               <li>Save changes or Export as new PDF</li>
@@ -171,7 +186,7 @@ export function usePDFEditing() {
 
   const saveEdit = (modifiedBlob: Blob) => {
     setCurrentPDF(modifiedBlob);
-    setEditHistory(prev => [...prev, modifiedBlob]);
+    setEditHistory((prev) => [...prev, modifiedBlob]);
   };
 
   const undo = () => {
@@ -194,6 +209,6 @@ export function usePDFEditing() {
     saveEdit,
     undo,
     finishEditing,
-    canUndo: editHistory.length > 1
+    canUndo: editHistory.length > 1,
   };
 }
