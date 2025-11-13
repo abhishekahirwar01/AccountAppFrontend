@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(15px);
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+
+make them  move anywhere not like that
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 220 50% 98%; /* #F8FAFC */
+    --foreground: 224 71% 4%; /* #0D121C */
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    --primary: 206 98% 51%;
+    --primary-foreground: 213 31% 91%;
+
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 224 71% 4%;
+
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 206 98% 51%;
+
+    --radius: 0.8rem;
+    
+    --chart-1: 206 98% 51%;
+    --chart-2: 150 88% 68%;
+    --chart-3: 38 88% 68%;
+    --chart-4: 202 53% 64%;
+    --chart-5: 340 88% 68%;
+
+    --sidebar-background: 220 50% 98%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-primary: 206 98% 51%;
+    --sidebar-primary-foreground: 213 31% 91%;
+    --sidebar-accent: 220 13% 91%;
+    --sidebar-accent-foreground: 224 71% 4%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 206 98% 51%;
+  }
+
+  .dark {
+    --background: 224 71% 4%; /* #0D121C */
+    --foreground: 213 31% 91%; /* #E4E7ED */
+    
+    --card: 220 40% 10%; /* #151A27 */
+    --card-foreground: 213 31% 91%;
+    
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 206 98% 51%; /* #7AB4D6 */
+    --primary-foreground: 213 31% 91%;
+    
+    --secondary: 215 28% 17%; /* #21293D */
+    --secondary-foreground: 213 31% 91%;
+    
+    --muted: 215 28% 17%;
+    --muted-foreground: 218 24% 65%; /* #949EB4 */
+
+   --accent: 215 28% 17%; /* #21293D - Changed from green to match secondary */
+    --accent-foreground: 213 31% 91%; /* Changed from white to match secondary-foreground */
+    
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 215 28% 17%; /* #21293D */
+    --input: 215 28% 17%;
+    --ring: 206 98% 51%;
+    
+    --chart-1: 206 98% 51%;
+    --chart-2: 150 88% 68%;
+    --chart-3: 38 88% 68%;
+    --chart-4: 202 53% 64%;
+    --chart-5: 340 88% 68%;
+    
+    --sidebar-background: 220 40% 10%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 206 98% 51%;
+    --sidebar-primary-foreground: 213 31% 91%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 206 98% 51%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+[data-radix-select-item-indicator] {
+  display: none !important;
+}
+
+mark {
+  background-color: yellow; /* ya koi bhi highlight color */
+  color: inherit;           /* text ka color same rahe */
+  font-weight: bold;        /* optional */
+  padding: 0 2px;           /* thoda gap de */
+  border-radius: 2px;       /* rounded look */
+}
+.focus\:ring-0:focus {
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none;
+  box-shadow: none !important;
+}
+
+
+
+.focus\:ring-ring:focus {
+    --tw-ring-color: transparent !important;
+}
